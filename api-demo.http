@@ -1,0 +1,393 @@
+# Get access and refresh tokens
+POST {{demo-service}}/oauth/token
+Authorization: Basic client secret
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=password&scope=*&username=jdoe@example.com&password=123456
+
+> {%
+  var accessToken = response.body.access_token;
+  client.global.set("accessToken", accessToken);
+  var refreshToken = response.body.refresh_token;
+  client.global.set("refreshToken", refreshToken);
+
+  client.test("Get tokens", function() {
+    client.assert(response.status === 200, "Response status is 200");
+  });
+%}
+
+###
+
+# Refresh tokens
+POST {{demo-service}}/oauth/token
+Authorization: Basic client secret
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=refresh_token&scope=*&refresh_token={{refreshToken}}
+
+> {%
+  var accessToken = response.body.access_token;
+  client.global.set("accessToken", accessToken);
+  var refreshToken = response.body.refresh_token;
+  client.global.set("refreshToken", refreshToken);
+
+  client.test("Refresh regular tokens", function() {
+    client.assert(response.status === 200, "Response status is 200");
+  });
+%}
+
+###
+
+GET {{demo-service}}/actuator/health
+
+###
+
+#Create brand
+POST {{demo-service}}/brands
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+    "name": "Nike",
+    "description": "just do it"
+}
+
+> {%
+    client.global.set("firstBrandId", response.body.id);
+%}
+
+###
+
+#Create another brand
+POST {{demo-service}}/brands
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+    "name": "Apple",
+    "description": "Macintosh"
+}
+
+> {%
+    client.global.set("secondBrandId", response.body.id);
+%}
+
+###
+
+#Get first brand
+GET {{demo-service}}/brands/{{firstBrandId}}
+Accept: application/json
+
+###
+
+#Update first brand by brandId
+PUT {{demo-service}}/brands/{{firstBrandId}}
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+    "name": "Nike",
+    "description": "Just do it"
+}
+
+###
+
+#Get all brands
+GET {{demo-service}}/brands?page=0&size=10
+Accept: application/json
+
+###
+
+#Delete brand by brandId
+DELETE {{demo-service}}/brands/{{firstBrandId}}
+Authorization: Bearer {{accessToken}}
+
+###
+
+#Create Product (you must first create brand)
+POST {{demo-service}}/products
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "name": "Good sneakers",
+  "description": "Sneakers",
+  "amount": 100,
+  "price": 123.45,
+  "brandId": {{firstBrandId}}
+}
+
+> {%
+    client.global.set("firstProductId", response.body.id);
+%}
+
+###
+
+#Create another Product
+POST {{demo-service}}/products
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "name": "MacBook",
+  "description": "laptop",
+  "amount": 30,
+  "price": "1234.56",
+  "brandId": {{secondBrandId}}
+}
+
+> {%
+    client.global.set("secondProductId", response.body.id);
+%}
+
+###
+
+#Get product
+GET {{demo-service}}/products/{{firstProductId}}
+Accept: application/json
+
+###
+#Update product
+PUT {{demo-service}}/products/{{firstProductId}}
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "name": "Good sneakers",
+  "description": "Sneakers",
+  "amount": 110,
+  "price": 123.54,
+  "brandId": {{firstBrandId}}
+}
+
+###
+
+#Get products by brandId. Return pages
+GET {{demo-service}}/brands/1/products?page=0&size=10
+Accept: application/json
+
+###
+
+#Get products by several productIds. Return List. Inernal call only
+GET {{demo-service}}/products/?id=52&id=53
+Accept: application/json
+
+###
+
+#Try to get a nonexistent brand. return 404
+GET {{demo-service}}/brands/12345
+Accept: application/json
+Accept-Language: ru
+
+###
+
+#Try to get brand with wrong address
+GET {{demo-service}}/brands/bla/bla
+Accept: application/json
+Accept-Language: uk
+
+###
+
+#Try to create brand with wrong request body
+POST {{demo-service}}/brands
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+    "wrong-name": "apple",
+    "wrong-description": "mac"
+}
+
+> {%
+    client.global.set("secondBrandId", response.body.id);
+%}
+
+###
+
+#Create Product with wrong brand id
+POST {{demo-service}}/products
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "name": "Good sneakers",
+  "description": "Sneakers",
+  "amount": 110,
+  "price": 123.54,
+  "brandId": 12345
+}
+
+###
+
+#Try to delete brand with wrong id
+DELETE {{demo-service}}/brands/12345
+Authorization: Bearer {{accessToken}}
+
+###
+
+#Update brand by wrong brandId
+PUT {{demo-service}}/brands/12345
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+    "name": "Some brand",
+    "description": "Just do nothing"
+}
+
+###
+
+#Try to get wrong product
+GET {{demo-service}}/products/12345
+Accept: application/json
+
+###
+
+#Try to update wrong product
+PUT {{demo-service}}/products/12345
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "name": "Some product",
+  "description": "Some description",
+  "amount": 150,
+  "price": 1500.00,
+  "brandId": {{firstBrandId}}
+}
+
+###
+
+# Create a new order
+POST {{demo-service}}/orders
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "products": [
+    {
+      "productId": 52,
+      "price": 2.75,
+      "amount": 12
+    },
+    {
+      "productId": 53,
+      "price": 5.75,
+      "amount": 2
+    }
+  ]
+}
+> {%
+    client.global.set("orderId", response.body.id);
+%}
+
+
+###
+
+# Update the order
+PUT {{demo-service}}/orders/{{orderId}}
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "products": [
+    {
+      "productId": 52,
+      "price": 2.75,
+      "amount": 12
+    },
+    {
+      "productId": 53,
+      "price": 5.75,
+      "amount": 2
+    }
+  ]
+}
+
+###
+
+# Call with not existing orderId, must return 404
+PUT {{demo-service}}/orders/9999
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "products": [
+    {
+      "productId": 52,
+      "price": 2.75,
+      "amount": 12
+    },
+    {
+      "productId": 53,
+      "price": 5.75,
+      "amount": 2
+    }
+  ]
+}
+
+
+###
+
+# Repeated call should return HttpStatus.CONFLICT
+DELETE {{demo-service}}/orders/{{orderId}}
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+###
+
+# Get an order
+GET {{demo-service}}/orders/{{orderId}}
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+###
+
+# Get a not existing orderId, must return 404
+GET {{demo-service}}/orders/9999
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+###
+
+# Delete a not existing order, must return 404
+DELETE {{demo-service}}/orders/9999
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+###
+
+# Get all orders by status
+GET {{demo-service}}/orders?status=NEW
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+###
+
+# Get orders by incorrect status
+GET {{demo-service}}/orders?status=INVALID_STATUS
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+###
+
+# Get orders by status and page details
+GET {{demo-service}}/orders?status=NEW&page=0&size=10
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+###
+
+# Get all orders with default paging
+GET {{demo-service}}/orders
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+###
+
+# Get all orders with a given page details
+GET {{demo-service}}/orders?page=0&size=10
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+###

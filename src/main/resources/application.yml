@@ -1,0 +1,76 @@
+logging:
+  level:
+    jdbc:
+      sqltiming: info
+      resultsettable: info
+      sqlonly: fatal
+      audit: fatal
+      resultset: fatal
+      connection: fatal
+
+log4jdbc:
+  dump.sql:
+    addsemicolon: true
+    maxlinelength: 0
+  trim.sql:
+    extrablanklines: false
+
+management:
+  info:
+    git:
+      mode: full
+  endpoint:
+    health:
+      show-details: always
+      show-components: always
+  endpoints:
+    web:
+      exposure:
+        include:
+          - health
+          - info
+          - metrics
+
+spring:
+  application:
+    name: '@project.name@'
+
+  jpa:
+    open-in-view: false
+    properties:
+      hibernate:
+        order_inserts: true
+        order_updates: true
+        jdbc:
+          batch_size: 20
+          fetch_size: 20
+          batch_versioned_data: true
+    hibernate:
+      ddl-auto: create
+
+  main:
+    banner-mode: off
+
+  messages:
+    basename: messages, common-messages
+
+  resources:
+    add-mappings: false
+
+  mvc:
+    throw-exception-if-no-handler-found: true
+
+external-service:
+  product-service:
+    url: 'http://localhost:8080'
+
+security:
+  oauth2:
+    authorization:
+      jwt:
+        key-value: 123456
+    client:
+      client-id: client
+      client-secret: secret
+      scope: '*'
+      authorized-grant-types: password, refresh_token

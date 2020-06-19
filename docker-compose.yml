@@ -1,0 +1,13 @@
+version: '2.3'
+
+services:
+  demo-service:
+    build: .
+    restart: 'on-failure'
+    ports:
+      - 8080:8080
+    healthcheck:
+      test: curl -f localhost:8080/actuator/health | grep UP || exit 1
+      interval: 20s
+      timeout: 5s
+      retries: 10
