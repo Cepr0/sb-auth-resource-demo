@@ -9,7 +9,7 @@ RUN mvn -f ./pom.xml package
 
 FROM openjdk:11-jre-slim
 WORKDIR /service
-COPY --from=builder target/*.jar service.jar
+COPY --from=builder /source/target/*.jar service.jar
 EXPOSE 8080
 ENTRYPOINT exec java -server \
 -noverify \
