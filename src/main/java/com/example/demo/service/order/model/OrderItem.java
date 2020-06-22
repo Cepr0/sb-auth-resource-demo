@@ -1,5 +1,6 @@
 package com.example.demo.service.order.model;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import javax.validation.constraints.DecimalMin;
@@ -13,6 +14,7 @@ public class OrderItem implements Serializable {
     @Min(1)
     private long productId;
 
+    @Schema(pattern = "###.00", format = "float")
     @Digits(integer = 11, fraction = 2)
     @DecimalMin(value = "0.00", inclusive = false)
     private BigDecimal price;

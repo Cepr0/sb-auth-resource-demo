@@ -1,3 +1,5 @@
+
+
 logging:
   level:
     jdbc:
@@ -74,3 +76,8 @@ security:
       client-secret: secret
       scope: '*'
       authorized-grant-types: password, refresh_token
+
+springdoc:
+  packages-to-scan: com.example.demo
+  default-produces-media-type: application/json
+  writer-with-default-pretty-printer: true

@@ -3,6 +3,7 @@ package com.example.demo.common.handler.exception;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.NonNull;
 import lombok.Value;
 import org.springframework.http.HttpStatus;
@@ -41,6 +42,17 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
  * }
  * </pre>
  */
+@Schema(
+        name = "ApiError",
+        description = "API error object",
+        example = "{\n" +
+                "   \"timestamp\": \"2017-10-20T13:36:04.859Z\",\n" +
+                "   \"status\": 400,\n" +
+                "   \"error\": \"Bad request\",\n" +
+                "   \"message\": \"Validation failed\",\n" +
+                "   \"path\": \"/path\"\n" +
+                "}"
+)
 @JsonInclude(NON_EMPTY)
 @JsonPropertyOrder({"timestamp", "status", "error", "message", "path", "errors"})
 @Value
@@ -77,6 +89,7 @@ public class ApiErrorMessage implements Serializable {
     /**
      * Collection of detailed sub-errors, for example, validation error of the request body specific field
      */
+    @Schema(nullable = true, description = "Array with optional error descriptions")
     Collection<Error> errors = new ArrayList<>();
 
     ApiErrorMessage(@NonNull Instant timestamp, @NonNull HttpStatus httpStatus, @NonNull String message, @NonNull String path) {
@@ -100,6 +113,7 @@ public class ApiErrorMessage implements Serializable {
     /**
      * Sub-error container
      */
+    @Schema(description = "Optional error description")
     @JsonInclude(NON_EMPTY)
     @Value
     public static class Error implements Serializable {
@@ -107,21 +121,25 @@ public class ApiErrorMessage implements Serializable {
         /**
          * Object name related to the sub-error
          */
+        @Schema(nullable = true, description = "Name of the object contains incorrect property")
         String object;
 
         /**
          * Object property name related to the sub-error
          */
+        @Schema(nullable = true, description = "Incorrect property name")
         String property;
 
         /**
          * Detailed sub-error message
          */
+        @Schema(description = "Additional error description")
         @NonNull String message;
 
         /**
          * Invalid value of object property related to the sub-error
          */
+        @Schema(nullable = true, description = "Invalid property value", type = "string")
         Object invalidValue;
     }
 }
