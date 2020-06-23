@@ -12,6 +12,7 @@ import com.example.demo.service.order.service.OrderService;
 import com.example.demo.service.order.validator.OrderRequestValidator;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -21,6 +22,7 @@ import org.springdoc.core.converters.models.PageableAsQueryParam;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.WebDataBinder;
@@ -56,6 +58,12 @@ public class OrderController {
             summary = "Creates a new Order",
             description = "Creates a new Order and sets its status to 'NEW'.\n\n" +
                     "Checks if given products are present in the DB and they are active."
+    )
+    @Parameter(
+            in = ParameterIn.HEADER,
+            name = HttpHeaders.ACCEPT_LANGUAGE,
+            schema = @Schema(allowableValues = {"en", "uk", "ru"}, defaultValue = "en"),
+            description = "Customer languages"
     )
     @ApiSecured
     @ApiResponseCreated("Order")

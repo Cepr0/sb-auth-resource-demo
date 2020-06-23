@@ -22,6 +22,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
                 .antMatchers("/actuator/**").permitAll()
                 .antMatchers(
                         "/",
+                        "/webjars/**",
                         "/index.html",
                         "/favicon.ico",
                         "/v3/api-docs/**",
