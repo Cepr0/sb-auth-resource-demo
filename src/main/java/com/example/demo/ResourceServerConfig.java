@@ -20,8 +20,15 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
                 .logout().disable()
                 .authorizeRequests()
                 .antMatchers("/actuator/**").permitAll()
-                .antMatchers("/v3/api-docs/**").permitAll()
-                .antMatchers("/swagger-ui/**").permitAll()
+                .antMatchers(
+                        "/",
+                        "/index.html",
+                        "/favicon.ico",
+                        "/v3/api-docs/**",
+                        "/swagger-ui/**",
+                        "/swagger-ui.html",
+                        "/api-docs"
+                ).permitAll()
                 .antMatchers(HttpMethod.GET,  "/products/**", "/brands/**").permitAll()
                 .anyRequest().authenticated();
     }

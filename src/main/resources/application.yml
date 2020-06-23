@@ -1,7 +1,9 @@
-
-
 logging:
   level:
+    org:
+      springframework:
+        web: debug
+        security: debug
     jdbc:
       sqltiming: info
       resultsettable: info
@@ -81,3 +83,5 @@ springdoc:
   packages-to-scan: com.example.demo
   default-produces-media-type: application/json
   writer-with-default-pretty-printer: true
+  swagger-ui:
+    path: /api-docs

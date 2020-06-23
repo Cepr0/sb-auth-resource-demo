@@ -1,6 +1,10 @@
 package com.example.demo.service.order.controller;
 
 import com.example.demo.common.handler.exception.ApiErrorMessage;
+import com.example.demo.common.openapi.annotation.ApiResponseCreated;
+import com.example.demo.common.openapi.annotation.ApiResponseNotFound;
+import com.example.demo.common.openapi.annotation.ApiResponseUnprocessableEntity;
+import com.example.demo.common.openapi.annotation.ApiSecured;
 import com.example.demo.service.order.dto.OrderRequest;
 import com.example.demo.service.order.dto.OrderResponse;
 import com.example.demo.service.order.model.OrderStatus;
@@ -8,7 +12,6 @@ import com.example.demo.service.order.service.OrderService;
 import com.example.demo.service.order.validator.OrderRequestValidator;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.headers.Header;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -18,7 +21,6 @@ import org.springdoc.core.converters.models.PageableAsQueryParam;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.WebDataBinder;
@@ -51,28 +53,14 @@ public class OrderController {
     }
 
     @Operation(
-            security = @SecurityRequirement(name = SECURITY_SCHEMA),
             summary = "Creates a new Order",
             description = "Creates a new Order and sets its status to 'NEW'.\n\n" +
-                    "Checks if given products are present in the DB and they are active.",
-            responses = {
-                    @ApiResponse(
-                            responseCode = "201",
-                            description = "A new Order object",
-                            headers = @Header(name = HttpHeaders.LOCATION, description = "Contains the order id: '/orders/{id}'")
-                    ),
-                    @ApiResponse(
-                            responseCode = "404",
-                            description = "Authenticated customer not found",
-                            content = @Content(schema = @Schema(implementation = ApiErrorMessage.class))
-                    ),
-                    @ApiResponse(
-                            responseCode = "409",
-                            description = "The given request body is not valid, or if given products not found or not active",
-                            content = @Content(schema = @Schema(implementation = ApiErrorMessage.class))
-                    )
-            }
+                    "Checks if given products are present in the DB and they are active."
     )
+    @ApiSecured
+    @ApiResponseCreated("Order")
+    @ApiResponseNotFound("Authenticated customer")
+    @ApiResponseUnprocessableEntity
     @PostMapping
     public ResponseEntity<OrderResponse> create(
             @Valid @RequestBody OrderRequest request,

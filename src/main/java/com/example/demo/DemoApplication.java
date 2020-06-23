@@ -10,12 +10,15 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
+import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
+@Controller
 @SpringBootApplication
 public class DemoApplication {
 
@@ -33,6 +36,12 @@ public class DemoApplication {
         SpringApplication.run(DemoApplication.class, args);
         TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
         Locale.setDefault(Locale.US);
+    }
+
+    @RequestMapping("/")
+    public String index() {
+        //has to be without blank spaces
+        return "forward:index.html";
     }
 
     @Transactional
