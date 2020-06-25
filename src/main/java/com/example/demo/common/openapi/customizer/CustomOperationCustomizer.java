@@ -32,15 +32,9 @@ public class CustomOperationCustomizer implements OperationCustomizer {
     }
 
     private void customizeApiResponse(HttpStatus status, Operation operation, HandlerMethod handlerMethod) {
-        ApiResponses responses = operation.getResponses();
-        if (responses == null) {
-            responses = new ApiResponses();
-            operation.setResponses(responses);
-        }
-
+        ApiResponses responses = getResponses(operation);
         Annotation annotation;
         String description = null;
-
         switch (status) {
             case OK:
                 annotation = handlerMethod.getMethodAnnotation(ApiResponseOk.class);
@@ -85,11 +79,7 @@ public class CustomOperationCustomizer implements OperationCustomizer {
     }
 
     private void customizeApiResponseCreated(Operation operation, HandlerMethod handlerMethod) {
-        ApiResponses responses = operation.getResponses();
-        if (responses == null) {
-            responses = new ApiResponses();
-            operation.setResponses(responses);
-        }
+        ApiResponses responses = getResponses(operation);
         var annotation = handlerMethod.getMethodAnnotation(ApiResponseCreated.class);
         if (annotation != null) {
             String object = annotation.object();
@@ -108,4 +98,14 @@ public class CustomOperationCustomizer implements OperationCustomizer {
             }
         }
     }
+
+    private ApiResponses getResponses(Operation operation) {
+        ApiResponses responses = operation.getResponses();
+        if (responses == null) {
+            responses = new ApiResponses();
+            operation.setResponses(responses);
+        }
+        return responses;
+    }
+
 }
