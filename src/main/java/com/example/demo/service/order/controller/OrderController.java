@@ -1,6 +1,5 @@
 package com.example.demo.service.order.controller;
 
-import com.example.demo.common.exception.ApiErrorMessage;
 import com.example.demo.common.openapi.annotation.*;
 import com.example.demo.service.order.dto.OrderRequest;
 import com.example.demo.service.order.dto.OrderResponse;
@@ -9,10 +8,7 @@ import com.example.demo.service.order.service.OrderService;
 import com.example.demo.service.order.validator.OrderRequestValidator;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springdoc.core.converters.models.PageableAsQueryParam;
 import org.springframework.data.domain.Page;
@@ -26,7 +22,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.security.Principal;
 
-import static com.example.demo.common.openapi.OpenApiConfig.PASSWORD_GRANT_TYPE;
 import static org.springframework.web.util.UriComponentsBuilder.fromUriString;
 
 @Tag(name = "Order API", description = "Order related operations")
@@ -52,14 +47,13 @@ public class OrderController {
     @ApiSecuredPasswordGrant
     @Operation(
             summary = "Creates a new Order",
-            description = "Creates a new Order and sets its status to 'NEW'.\n\n" +
-                    "Checks if given products are present in the DB and they are active.",
-            responses = {}
+            description = "Creates a new Order and sets its status to 'NEW'.\n\nChecks if given products are present in the DB and they are active."
     )
     @ApiHeaderAcceptLanguage
     @ApiResponseCreated(object = "Order", location = "/orders/{id}")
     @ApiResponseNotFound("When the authenticated customer not found")
     @ApiResponseUnprocessableEntity("When the given request body is not valid, or if given products not found or not active")
+
     @PostMapping
     public ResponseEntity<OrderResponse> create(
             @Valid @RequestBody OrderRequest request,
@@ -70,22 +64,13 @@ public class OrderController {
         return ResponseEntity.created(fromUriString("/orders/{id}").build(order.getId())).body(order);
     }
 
-    @Operation(
-            security = @SecurityRequirement(name = PASSWORD_GRANT_TYPE),
-            summary = "Replace the existing Order",
-            responses = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            description = "A replaced Order object",
-                            content = @Content(schema = @Schema(implementation = OrderResponse.class))
-                    ),
-                    @ApiResponse(
-                            responseCode = "404",
-                            description = "If the Order wasn't found",
-                            content = @Content(schema = @Schema(implementation = ApiErrorMessage.class))
-                    )
-            }
-    )
+    @ApiSecuredPasswordGrant
+    @Operation(summary = "Replaces the existing Order")
+    @ApiHeaderAcceptLanguage
+    @ApiResponseOk("Return a replaced Order")
+    @ApiResponseNotFound("When the authenticated customer not found or when the order bot found")
+    @ApiResponseUnprocessableEntity("When the given request body is not valid, or if given products not found or not active")
+
     @PutMapping("/{orderId}")
     public OrderResponse replace(
             @PathVariable @Schema(example = "1") long orderId,
@@ -94,21 +79,36 @@ public class OrderController {
         return ordersService.replace(orderId, request);
     }
 
-    @Operation(security = @SecurityRequirement(name = PASSWORD_GRANT_TYPE))
+    @ApiSecuredPasswordGrant
+    @Operation(summary = "Delete the Order by its id")
+    @ApiHeaderAcceptLanguage
+    @ApiResponseNoContent("In case of successful operation")
+    @ApiResponseNotFound("When the authenticated customer not found or when the order bot found")
+
     @DeleteMapping("/{orderId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable long orderId) {
         ordersService.delete(orderId);
     }
 
-    @Operation(security = @SecurityRequirement(name = PASSWORD_GRANT_TYPE))
+    @ApiSecuredPasswordGrant
+    @Operation(summary = "Get the Order by its id")
+    @ApiHeaderAcceptLanguage
+    @ApiResponseOk("The Order object")
+    @ApiResponseNotFound("When the authenticated customer not found or when the order bot found")
+
     @GetMapping("/{orderId}")
     public OrderResponse get(@PathVariable long orderId) {
         return ordersService.get(orderId);
     }
 
-    @Operation(security = @SecurityRequirement(name = PASSWORD_GRANT_TYPE))
+    @ApiSecuredPasswordGrant
+    @Operation(summary = "Get pageable Order list its status (optional)")
+    @ApiHeaderAcceptLanguage
+    @ApiResponseOk("Pageable Order list")
+    @ApiResponseNotFound("When the authenticated customer not found")
     @PageableAsQueryParam
+
     @GetMapping
     public Page<OrderResponse> get(
             @RequestParam(required = false) OrderStatus status,

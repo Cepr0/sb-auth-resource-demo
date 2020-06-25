@@ -49,7 +49,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
                 "   \"timestamp\": \"2017-10-20T13:36:04.859Z\",\n" +
                 "   \"status\": 400,\n" +
                 "   \"error\": \"Bad request\",\n" +
-                "   \"message\": \"Validation failed\",\n" +
+                "   \"message\": \"Error message example\",\n" +
                 "   \"path\": \"/path\"\n" +
                 "}"
 )
