@@ -10,7 +10,7 @@ import java.lang.annotation.*;
 //        description = "Authenticated customer not found",
 //        content = @Content(schema = @Schema(implementation = ApiErrorMessage.class))
 //)
-public @interface ApiResponseNotFound {
+public @interface ApiResponseBadRequest {
     /**
      * @return Circumstances of this response
      */

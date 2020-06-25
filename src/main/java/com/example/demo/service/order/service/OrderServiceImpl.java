@@ -1,6 +1,6 @@
 package com.example.demo.service.order.service;
 
-import com.example.demo.common.handler.exception.ApiException;
+import com.example.demo.common.exception.ApiException;
 import com.example.demo.service.customer.repo.CustomerRepo;
 import com.example.demo.service.order.dto.OrderRequest;
 import com.example.demo.service.order.dto.OrderResponse;

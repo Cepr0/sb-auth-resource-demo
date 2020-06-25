@@ -34,7 +34,10 @@ import java.util.List;
 @Configuration
 public class OpenApiConfig {
 
-    public static final String SECURITY_SCHEMA = "Password grant type";
+    public static final String LANG_EN = "en";
+    public static final String LANG_RU = "ru";
+    public static final String LANG_UK = "uk";
+    public static final String PASSWORD_GRANT_TYPE = "Password grant type";
     public static final String GET_TOKENS_URL = "/oauth/token";
     public static final String REFRESH_TOKENS_URL = "/oauth/token";
     public static final String DEFAULT_SCOPE = "*";
@@ -66,9 +69,9 @@ public class OpenApiConfig {
                 ))
                 .components(new Components()
                         .addSecuritySchemes(
-                                SECURITY_SCHEMA,
+                                PASSWORD_GRANT_TYPE,
                                 new SecurityScheme()
-                                        .scheme(SECURITY_SCHEMA)
+                                        .scheme(PASSWORD_GRANT_TYPE)
                                         .type(SecurityScheme.Type.OAUTH2)
                                         .flows(new OAuthFlows()
                                                 .password(new OAuthFlow()

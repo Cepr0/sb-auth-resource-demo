@@ -1,6 +1,6 @@
 package com.example.demo.service.product.service.impl;
 
-import com.example.demo.common.handler.exception.ApiException;
+import com.example.demo.common.exception.ApiException;
 import com.example.demo.service.product.dto.BrandRequest;
 import com.example.demo.service.product.dto.BrandResponse;
 import com.example.demo.service.product.mapper.BrandMapper;

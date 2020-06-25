@@ -1,4 +1,4 @@
-package com.example.demo.common.handler.exception;
+package com.example.demo.common.exception;
 
 import lombok.Getter;
 import lombok.NonNull;

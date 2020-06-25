@@ -1,6 +1,6 @@
 package com.example.demo.service.order.client;
 
-import com.example.demo.common.handler.exception.ApiException;
+import com.example.demo.common.exception.ApiException;
 import com.example.demo.service.order.dto.productService.ProductResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

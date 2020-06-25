@@ -1,4 +1,4 @@
-package com.example.demo.common.handler.exception;
+package com.example.demo.common.exception;
 
 import com.example.demo.common.i18n.MessageProvider;
 import lombok.NonNull;

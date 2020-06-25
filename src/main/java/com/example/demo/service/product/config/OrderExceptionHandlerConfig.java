@@ -1,8 +1,8 @@
 package com.example.demo.service.product.config;
 
-import com.example.demo.common.handler.exception.ApiErrorMessageFactory;
-import com.example.demo.common.handler.exception.GlobalExceptionHandler;
-import com.example.demo.common.handler.exception.GlobalExceptionHandlerConfigurer;
+import com.example.demo.common.exception.ApiErrorMessageFactory;
+import com.example.demo.common.exception.GlobalExceptionHandler;
+import com.example.demo.common.exception.GlobalExceptionHandlerConfigurer;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.dao.DataIntegrityViolationException;
 
